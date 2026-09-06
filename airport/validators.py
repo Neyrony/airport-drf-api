@@ -1,0 +1,15 @@
+def validate_seat_and_row(
+    seat: int,
+    row: int,
+    max_seats_in_row: int,
+    max_rows: int,
+    exception: type[Exception],
+):
+    if not (1 <= seat <= max_seats_in_row):
+        raise exception(
+            f"Seat number {seat} doesn't exist in the plane. Please choose between 1 and {max_seats_in_row}"
+        )
+    elif not (1 <= row <= max_rows):
+        raise exception(
+            f"Row number {row} doesn't exist in the plane. Please choose between 1 and {max_rows}"
+        )
