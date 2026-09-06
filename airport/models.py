@@ -107,7 +107,7 @@ class Order(models.Model):
     )
 
     def __str__(self):
-        return f"Order id: {self.id}"
+        return str(self.id)
 
 
 class Ticket(models.Model):
