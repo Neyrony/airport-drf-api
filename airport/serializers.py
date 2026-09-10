@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from airport.models import (
     Airport,
@@ -10,6 +11,7 @@ from airport.models import (
     Order,
     Ticket,
 )
+from airport.validators import validate_source_destination
 
 
 class AirportSerializer(serializers.ModelSerializer):
@@ -31,6 +33,15 @@ class RouteSerializer(serializers.ModelSerializer):
             "destination",
             "distance",
         )
+
+    def validate(self, data):
+        validate_source_destination(data["source"].id, data["destination"].id, ValidationError)
+        return data
+
+
+class RouteListRetrieveSerializer(RouteSerializer):
+    source = serializers.SlugRelatedField(slug_field="name", read_only=True)
+    destination = serializers.SlugRelatedField(slug_field="name", read_only=True)
 
 
 class AirplaneTypeSerializer(serializers.ModelSerializer):

@@ -18,7 +18,7 @@ from airport.serializers import (
     FlightSerializer,
     OrderSerializer,
     TicketSerializer,
-    AirplaneTypeSerializer,
+    AirplaneTypeSerializer, RouteListRetrieveSerializer,
 )
 
 
@@ -31,18 +31,39 @@ class AirportViewSet(ModelViewSet):
             name = self.request.query_params.get("name")
             closest_big_city = self.request.query_params.get("closest_big_city")
 
-        if name:
-            queryset = queryset.filter(name__icontains=name)
+            if name:
+                queryset = queryset.filter(name__icontains=name)
 
-        if closest_big_city:
-            queryset = queryset.filter(closest_big_city__icontains=closest_big_city)
+            if closest_big_city:
+                queryset = queryset.filter(closest_big_city__icontains=closest_big_city)
 
         return queryset
-    
+
 
 class RouteViewSet(ModelViewSet):
-    serializer_class = RouteSerializer
-    queryset = Route.objects.all()
+    def get_queryset(self):
+        queryset = Route.objects.all()
+        if self.action in ("list", "retrieve"):
+            queryset = queryset.select_related("source", "destination")
+
+            if self.action == "list":
+                source = self.request.query_params.get("source")
+                destination = self.request.query_params.get("destination")
+
+                if source:
+                    queryset = queryset.filter(source__name__icontains=source)
+
+                if destination:
+                    queryset = queryset.filter(destination__name__icontains=destination)
+
+
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return RouteListRetrieveSerializer
+
+        return RouteSerializer
 
 
 class AirplaneTypeViewSet(ModelViewSet):
