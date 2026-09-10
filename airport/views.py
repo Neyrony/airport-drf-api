@@ -27,8 +27,9 @@ class AirportViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = Airport.objects.all()
-        name = self.request.query_params.get("name")
-        closest_big_city = self.request.query_params.get("closest_big_city")
+        if self.action == "list":
+            name = self.request.query_params.get("name")
+            closest_big_city = self.request.query_params.get("closest_big_city")
 
         if name:
             queryset = queryset.filter(name__icontains=name)
