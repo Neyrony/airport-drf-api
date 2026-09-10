@@ -84,7 +84,9 @@ class FlightAdmin(admin.ModelAdmin):
     list_per_page = 25
 
     def get_queryset(self, request):
-        return Flight.objects.select_related("route__destination", "route__source", "airplane")
+        return Flight.objects.select_related(
+            "route__destination", "route__source", "airplane"
+        )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "route":
@@ -97,11 +99,11 @@ class TicketInLine(admin.TabularInline):
     model = Ticket
     extra = 1
 
-    def formfield_for_foreignkey(
-        self, db_field, request, **kwargs
-    ):
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "flight":
-            kwargs["queryset"] = Flight.objects.select_related("airplane", "route__source", "route__destination")
+            kwargs["queryset"] = Flight.objects.select_related(
+                "airplane", "route__source", "route__destination"
+            )
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
@@ -132,11 +134,14 @@ class TicketAdmin(admin.ModelAdmin):
     list_per_page = 25
 
     def get_queryset(self, request):
-        return Ticket.objects.prefetch_related("flight__route__source", "flight__route__destination", "flight__airplane")
+        return Ticket.objects.prefetch_related(
+            "flight__route__source", "flight__route__destination", "flight__airplane"
+        )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "flight":
-            kwargs["queryset"] = Flight.objects.select_related("airplane", "route__source", "route__destination")
-        
+            kwargs["queryset"] = Flight.objects.select_related(
+                "airplane", "route__source", "route__destination"
+            )
+
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-        

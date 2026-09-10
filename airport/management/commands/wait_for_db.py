@@ -10,7 +10,7 @@ class Command(BaseCommand):
         while True:
             try:
                 connection.ensure_connection()
-                self.stdout.write('Connected to database')
+                self.stdout.write("Connected to database")
                 return
             except (OperationalError, PsycopgOperationalError):
                 self.stdout.write("Waiting for database...")
