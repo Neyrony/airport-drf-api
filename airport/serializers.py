@@ -35,7 +35,9 @@ class RouteSerializer(serializers.ModelSerializer):
         )
 
     def validate(self, data):
-        validate_source_destination(data["source"].id, data["destination"].id, ValidationError)
+        validate_source_destination(
+            data["source"].id, data["destination"].id, ValidationError
+        )
         return data
 
 

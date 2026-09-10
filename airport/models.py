@@ -32,7 +32,9 @@ class Route(models.Model):
     )
 
     def clean(self):
-        validate_source_destination(self.source.id, self.destination.id, ValidationError)
+        validate_source_destination(
+            self.source.id, self.destination.id, ValidationError
+        )
 
     def save(self, *args, **kwargs):
         self.full_clean()
