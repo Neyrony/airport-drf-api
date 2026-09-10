@@ -106,7 +106,20 @@ class AirplaneViewSet(ModelViewSet):
 
 class CrewViewSet(ModelViewSet):
     serializer_class = CrewSerializer
-    queryset = Crew.objects.all()
+
+    def get_queryset(self):
+        queryset = Crew.objects.all()
+        if self.action == "list":
+            first_name = self.request.query_params.get("first_name")
+            last_name = self.request.query_params.get("last_name")
+
+            if first_name:
+                queryset = queryset.filter(first_name__icontains=first_name)
+
+            if last_name:
+                queryset = queryset.filter(last_name__icontains=last_name)
+
+        return queryset
 
 
 class FlightViewSet(ModelViewSet):

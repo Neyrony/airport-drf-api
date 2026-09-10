@@ -66,13 +66,15 @@ class AirplaneListRetrieveSerializer(AirplaneSerializer):
 
 
 class CrewSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Crew
-        fields = (
-            "id",
-            "first_name",
-            "last_name",
-        )
+        fields = ("id", "first_name", "last_name", "full_name")
+
+    @staticmethod
+    def get_full_name(obj):
+        return f"{obj.first_name} {obj.last_name}"
 
 
 class FlightSerializer(serializers.ModelSerializer):
