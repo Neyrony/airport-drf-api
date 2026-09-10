@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint
 
-from airport.validators import validate_seat_and_row
+from airport.validators import validate_seat_and_row, validate_source_destination
 
 
 class Airport(models.Model):
@@ -30,6 +30,13 @@ class Route(models.Model):
             MinValueValidator(1),
         ]
     )
+
+    def clean(self):
+        validate_source_destination(self.source.id, self.destination.id, ValidationError)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.source.name} -> {self.destination.name}"

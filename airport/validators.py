@@ -13,3 +13,7 @@ def validate_seat_and_row(
         raise exception(
             f"Row number {row} doesn't exist in the plane. Please choose between 1 and {max_rows}"
         )
+
+def validate_source_destination(source: int, destination: int, exception: type[Exception]):
+    if source == destination:
+        raise exception("Source and destination should be different")
