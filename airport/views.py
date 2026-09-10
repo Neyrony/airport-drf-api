@@ -20,6 +20,7 @@ from airport.serializers import (
     TicketSerializer,
     AirplaneTypeSerializer,
     RouteListRetrieveSerializer,
+    AirplaneListRetrieveSerializer,
 )
 
 
@@ -82,8 +83,25 @@ class AirplaneTypeViewSet(ModelViewSet):
 
 
 class AirplaneViewSet(ModelViewSet):
-    serializer_class = AirplaneSerializer
-    queryset = Airplane.objects.all()
+    def get_queryset(self):
+        queryset = Airplane.objects.all()
+
+        if self.action in ("list", "retrieve"):
+            queryset = queryset.select_related("airplane_type")
+
+            if self.action == "list":
+                name = self.request.query_params.get("name")
+
+                if name:
+                    queryset = queryset.filter(name__icontains=name)
+
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return AirplaneListRetrieveSerializer
+
+        return AirplaneSerializer
 
 
 class CrewViewSet(ModelViewSet):
