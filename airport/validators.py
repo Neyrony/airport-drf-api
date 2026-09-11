@@ -31,6 +31,4 @@ def validate_date(
     exception: type[Exception],
 ):
     if departure_time >= arrival_time:
-        raise exception(
-            "Departure time should be less than arrival time"
-        )
+        raise exception("Departure time should be less than arrival time")

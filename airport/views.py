@@ -1,3 +1,4 @@
+from django.db.models import Count, F
 from rest_framework.viewsets import ModelViewSet
 
 from airport.models import (
@@ -21,6 +22,8 @@ from airport.serializers import (
     AirplaneTypeSerializer,
     RouteListRetrieveSerializer,
     AirplaneListRetrieveSerializer,
+    FlightListSerializer,
+    FlightRetrieveSerializer,
 )
 
 
@@ -123,8 +126,54 @@ class CrewViewSet(ModelViewSet):
 
 
 class FlightViewSet(ModelViewSet):
-    serializer_class = FlightSerializer
-    queryset = Flight.objects.all()
+    @staticmethod
+    def _str_to_int_list(line):
+        return [int(x) for x in line.split(",")]
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return FlightListSerializer
+        elif self.action == "retrieve":
+            return FlightRetrieveSerializer
+        return FlightSerializer
+
+    def get_queryset(self):
+        queryset = Flight.objects.all()
+
+        if self.action in ("list", "retrieve"):
+            queryset = queryset.annotate(
+                tickets_available=F("airplane__seats_in_row") * F("airplane__rows")
+                - Count("tickets")
+            )
+
+            queryset = queryset.select_related(
+                "route__source", "route__destination", "airplane__airplane_type"
+            ).prefetch_related("crews")
+
+            if self.action == "list":
+                crews = self.request.query_params.get("crews")
+                airplane_name = self.request.query_params.get("airplane_name")
+                source = self.request.query_params.get("source")
+                destination = self.request.query_params.get("destination")
+
+                if crews:
+                    crews = self._str_to_int_list(crews)
+                    queryset = queryset.filter(crews__in=crews)
+
+                if airplane_name:
+                    queryset = queryset.filter(airplane__name__icontains=airplane_name)
+
+                if source:
+                    queryset = queryset.filter(route__source__name__icontains=source)
+
+                if destination:
+                    queryset = queryset.filter(
+                        route__destination__name__icontains=destination
+                    )
+
+                queryset = queryset.distinct()
+
+        return queryset
 
 
 class OrderViewSet(ModelViewSet):
