@@ -1,3 +1,6 @@
+import datetime
+
+
 def validate_seat_and_row(
     seat: int,
     row: int,
@@ -20,3 +23,14 @@ def validate_source_destination(
 ):
     if source == destination:
         raise exception("Source and destination should be different")
+
+
+def validate_date(
+    departure_time: datetime.datetime,
+    arrival_time: datetime.datetime,
+    exception: type[Exception],
+):
+    if departure_time >= arrival_time:
+        raise exception(
+            "Departure time should be less than arrival time"
+        )

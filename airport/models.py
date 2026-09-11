@@ -4,7 +4,11 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint
 
-from airport.validators import validate_seat_and_row, validate_source_destination
+from airport.validators import (
+    validate_seat_and_row,
+    validate_source_destination,
+    validate_date,
+)
 
 
 class Airport(models.Model):
@@ -107,6 +111,13 @@ class Flight(models.Model):
 
     def __str__(self):
         return f"{self.route} - {self.airplane}"
+
+    def clean(self):
+        validate_date(self.departure_time, self.arrival_time, ValidationError)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
 class Order(models.Model):
