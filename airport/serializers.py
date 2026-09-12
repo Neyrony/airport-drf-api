@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -164,12 +165,6 @@ class FlightRetrieveSerializer(FlightSerializer):
         }
 
 
-class OrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        fields = ("id", "created_at", "user")  # source
-
-
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
@@ -178,5 +173,46 @@ class TicketSerializer(serializers.ModelSerializer):
             "row",
             "seat",
             "flight",
-            "order",
         )
+
+
+class TicketOrderListSerializer(serializers.ModelSerializer):
+    airplane_name = serializers.CharField(read_only=True, source="flight.airplane.name")
+
+    class Meta:
+        model = Ticket
+        fields = (
+            "row",
+            "seat",
+            "airplane_name",
+        )
+
+
+class TicketOrderRetrieveSerializer(TicketSerializer):
+    flight = FlightRetrieveSerializer(read_only=True)
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    tickets = TicketSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ("id", "created_at", "tickets")
+
+    @transaction.atomic
+    def create(self, validated_data):
+        tickets = validated_data.pop("tickets")
+
+        order = Order.objects.create(**validated_data)
+        for ticket in tickets:
+            Ticket.objects.create(order=order, **ticket)
+
+        return order
+
+
+class OrderListSerializer(OrderSerializer):
+    tickets = TicketOrderListSerializer(many=True, read_only=True)
+
+
+class OrderRetrieveSerializer(OrderSerializer):
+    tickets = TicketOrderRetrieveSerializer(many=True, read_only=True)

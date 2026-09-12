@@ -1,5 +1,6 @@
 from django.db.models import Count, F
-from rest_framework.viewsets import ModelViewSet
+from rest_framework import mixins
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
 from airport.models import (
     Airport,
@@ -24,6 +25,8 @@ from airport.serializers import (
     AirplaneListRetrieveSerializer,
     FlightListSerializer,
     FlightRetrieveSerializer,
+    OrderListSerializer,
+    OrderRetrieveSerializer,
 )
 
 
@@ -176,9 +179,38 @@ class FlightViewSet(ModelViewSet):
         return queryset
 
 
-class OrderViewSet(ModelViewSet):
-    serializer_class = OrderSerializer
-    queryset = Order.objects.all()
+class OrderViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    GenericViewSet,
+):
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return OrderListSerializer
+        elif self.action == "retrieve":
+            return OrderRetrieveSerializer
+
+        return OrderSerializer
+
+    def get_queryset(self):
+        queryset = Order.objects.all()
+
+        if self.action == "list":
+            queryset = queryset.prefetch_related("tickets__flight__airplane")
+        elif self.action == "retrieve":
+            queryset = queryset.prefetch_related(
+                "tickets__flight__airplane__airplane_type",
+                "tickets__flight__route__source",
+                "tickets__flight__route__destination",
+                "tickets__flight__crews",
+            )
+
+        return queryset
 
 
 class TicketViewSet(ModelViewSet):
