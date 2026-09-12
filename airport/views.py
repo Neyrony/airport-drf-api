@@ -198,7 +198,7 @@ class OrderViewSet(
         return OrderSerializer
 
     def get_queryset(self):
-        queryset = Order.objects.all()
+        queryset = Order.objects.filter(user=self.request.user)
 
         if self.action == "list":
             queryset = queryset.prefetch_related("tickets__flight__airplane")
