@@ -1,8 +1,12 @@
+import pathlib
+import uuid
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint
+from django.utils.text import slugify
 
 from airport.validators import (
     validate_seat_and_row,
@@ -65,6 +69,14 @@ class AirplaneType(models.Model):
         ordering = ["name"]
 
 
+def airplane_image_path(instance: "Airplane", filename):
+    return (
+        pathlib.Path("uploads/images/")
+        / pathlib.Path(f"{slugify(instance.name)}-{uuid.uuid4()}")
+        / pathlib.Path(filename).suffix
+    )
+
+
 class Airplane(models.Model):
     name = models.CharField(max_length=255)
     rows = models.IntegerField(
@@ -80,6 +92,7 @@ class Airplane(models.Model):
     airplane_type = models.ForeignKey(
         AirplaneType, on_delete=models.SET_NULL, related_name="airplanes", null=True
     )
+    image = models.ImageField(null=True, upload_to=airplane_image_path)
 
     @property
     def seats(self):

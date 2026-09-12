@@ -147,3 +147,6 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 REST_FRAMEWORK = {"DEFAULT_PAGINATION_CLASS": "airport.pagination.BasePagination"}
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "/files/media/"
