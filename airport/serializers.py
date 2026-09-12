@@ -176,8 +176,14 @@ class TicketSerializer(serializers.ModelSerializer):
         )
 
 
-class TicketOrderListSerializer(serializers.ModelSerializer):
+class TicketListSerializer(serializers.ModelSerializer):
     airplane_name = serializers.CharField(read_only=True, source="flight.airplane.name")
+    departure_time = serializers.DateTimeField(
+        read_only=True, source="flight.departure_time", format="%d.%m.%Y %H:%M"
+    )
+    arrival_time = serializers.DateTimeField(
+        read_only=True, source="flight.arrival_time", format="%d.%m.%Y %H:%M"
+    )
 
     class Meta:
         model = Ticket
@@ -185,10 +191,12 @@ class TicketOrderListSerializer(serializers.ModelSerializer):
             "row",
             "seat",
             "airplane_name",
+            "departure_time",
+            "arrival_time",
         )
 
 
-class TicketOrderRetrieveSerializer(TicketSerializer):
+class TicketRetrieveSerializer(TicketSerializer):
     flight = FlightRetrieveSerializer(read_only=True)
 
 
@@ -211,8 +219,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderListSerializer(OrderSerializer):
-    tickets = TicketOrderListSerializer(many=True, read_only=True)
+    tickets = TicketListSerializer(many=True, read_only=True)
 
 
 class OrderRetrieveSerializer(OrderSerializer):
-    tickets = TicketOrderRetrieveSerializer(many=True, read_only=True)
+    tickets = TicketRetrieveSerializer(many=True, read_only=True)
