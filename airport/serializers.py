@@ -81,7 +81,10 @@ class AirplaneListRetrieveSerializer(AirplaneSerializer):
 class AirplaneImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Airplane
-        fields = ("id", "image",)
+        fields = (
+            "id",
+            "image",
+        )
 
 
 class CrewSerializer(serializers.ModelSerializer):

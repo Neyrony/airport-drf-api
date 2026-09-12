@@ -30,7 +30,8 @@ from airport.serializers import (
     OrderListSerializer,
     OrderRetrieveSerializer,
     TicketListSerializer,
-    TicketRetrieveSerializer, AirplaneImageSerializer,
+    TicketRetrieveSerializer,
+    AirplaneImageSerializer,
 )
 
 
