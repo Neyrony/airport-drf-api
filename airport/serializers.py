@@ -12,7 +12,11 @@ from airport.models import (
     Order,
     Ticket,
 )
-from airport.validators import validate_source_destination, validate_date
+from airport.validators import (
+    validate_source_destination,
+    validate_date,
+    validate_seat_and_row,
+)
 
 
 class AirportSerializer(serializers.ModelSerializer):
@@ -174,6 +178,16 @@ class TicketSerializer(serializers.ModelSerializer):
             "seat",
             "flight",
         )
+
+    def validate(self, data):
+        validate_seat_and_row(
+            data.get("seat"),
+            data.get("row"),
+            data.get("flight").airplane.seats_in_row,
+            data.get("flight").airplane.rows,
+            ValidationError,
+        )
+        return data
 
 
 class TicketListSerializer(serializers.ModelSerializer):
