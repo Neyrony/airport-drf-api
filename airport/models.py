@@ -57,6 +57,7 @@ class Route(models.Model):
                 fields=["source", "destination"], name="unique_source_destination"
             )
         ]
+        ordering = ["source__name", "destination__name"]
 
 
 class AirplaneType(models.Model):
@@ -71,9 +72,7 @@ class AirplaneType(models.Model):
 
 def airplane_image_path(instance: "Airplane", filename):
     filename = f"{slugify(instance.name)}-{uuid.uuid4()}{pathlib.Path(filename).suffix}"
-    return (
-        pathlib.Path("uploads/images") / pathlib.Path(filename)
-    )
+    return pathlib.Path("uploads/images") / pathlib.Path(filename)
 
 
 class Airplane(models.Model):
@@ -111,6 +110,9 @@ class Crew(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+    class Meta:
+        ordering = ["first_name", "last_name"]
+
 
 class Flight(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name="flights")
@@ -131,6 +133,9 @@ class Flight(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
+    class Meta:
+        ordering = ["arrival_time", "departure_time"]
+
 
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -140,6 +145,9 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    class Meta:
+        ordering = ["-created_at"]
 
 
 class Ticket(models.Model):
@@ -170,3 +178,4 @@ class Ticket(models.Model):
                 fields=["row", "seat", "flight"], name="unique_seat_flight"
             )
         ]
+        ordering = ["-order"]
