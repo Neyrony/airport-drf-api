@@ -70,10 +70,9 @@ class AirplaneType(models.Model):
 
 
 def airplane_image_path(instance: "Airplane", filename):
+    filename = f"{slugify(instance.name)}-{uuid.uuid4()}{pathlib.Path(filename).suffix}"
     return (
-        pathlib.Path("uploads/images/")
-        / pathlib.Path(f"{slugify(instance.name)}-{uuid.uuid4()}")
-        / pathlib.Path(filename).suffix
+        pathlib.Path("uploads/images") / pathlib.Path(filename)
     )
 
 

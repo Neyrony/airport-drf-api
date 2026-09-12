@@ -74,6 +74,15 @@ class AirplaneSerializer(serializers.ModelSerializer):
 class AirplaneListRetrieveSerializer(AirplaneSerializer):
     airplane_type = serializers.StringRelatedField()
 
+    class Meta(AirplaneSerializer.Meta):
+        fields = AirplaneSerializer.Meta.fields + ("image",)
+
+
+class AirplaneImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Airplane
+        fields = ("id", "image",)
+
 
 class CrewSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField(read_only=True)
