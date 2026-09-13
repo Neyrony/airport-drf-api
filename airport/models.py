@@ -24,6 +24,9 @@ class Airport(models.Model):
 
     class Meta:
         ordering = ["name"]
+        constraints = [
+            UniqueConstraint(fields=["name", "closest_big_city"], name="unique_airport")
+        ]
 
 
 class Route(models.Model):
