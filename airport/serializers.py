@@ -95,7 +95,7 @@ class CrewSerializer(serializers.ModelSerializer):
         fields = ("id", "first_name", "last_name", "full_name")
 
     @staticmethod
-    def get_full_name(obj):
+    def get_full_name(obj) -> str:
         return f"{obj.first_name} {obj.last_name}"
 
 

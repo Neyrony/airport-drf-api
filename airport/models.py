@@ -93,7 +93,7 @@ class Airplane(models.Model):
     image = models.ImageField(null=True, upload_to=airplane_image_path)
 
     @property
-    def seats(self):
+    def seats(self) -> int:
         return self.rows * self.seats_in_row
 
     def __str__(self):

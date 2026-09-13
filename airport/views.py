@@ -202,6 +202,7 @@ class OrderViewSet(
     mixins.ListModelMixin,
     GenericViewSet,
 ):
+    queryset = Order.objects.none()
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
@@ -232,6 +233,7 @@ class OrderViewSet(
 
 
 class TicketViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet):
+    queryset = Order.objects.none()
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):

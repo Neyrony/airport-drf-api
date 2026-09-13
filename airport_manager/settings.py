@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "debug_toolbar",
     "rest_framework",
+    "drf_spectacular",
     "airport",
     "user",
 ]
@@ -160,6 +161,7 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {"anon": "100/hour", "user": "1000/hour"},
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 MEDIA_URL = "/media/"
@@ -172,4 +174,11 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": True,
     "ALGORITHM": "HS256",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "AIRPORT API",
+    "DESCRIPTION": "AIRPORT API for interacting with airport instances via convenient api interface",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
