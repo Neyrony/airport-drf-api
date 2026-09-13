@@ -1,6 +1,7 @@
 from django.db.models import Count, F
 from rest_framework import mixins, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
@@ -201,6 +202,8 @@ class OrderViewSet(
     mixins.ListModelMixin,
     GenericViewSet,
 ):
+    permission_classes = [IsAuthenticated]
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
@@ -229,6 +232,8 @@ class OrderViewSet(
 
 
 class TicketViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
         queryset = Ticket.objects.all().filter(order__user=self.request.user)
 
