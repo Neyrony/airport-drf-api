@@ -57,6 +57,10 @@ class ModelTest(TestCase):
             f"{self.airport_1.name} ({self.airport_1.closest_big_city})",
         )
 
+    def test_airport_constraint(self):
+        with self.assertRaises(IntegrityError):
+            Airport.objects.create(name=self.airport_1.name, closest_big_city=self.airport_1.closest_big_city)
+
     def test_route_str(self):
         self.assertEqual(
             str(self.route),
@@ -106,8 +110,9 @@ class ModelTest(TestCase):
 
     def test_route_source_destination_validation(self):
         with self.assertRaises(ValidationError):
-            Route.objects.create(source=self.airport_1, destination=self.airport_1, distance=12)
-
+            Route.objects.create(
+                source=self.airport_1, destination=self.airport_1, distance=12
+            )
 
     def test_airplane_type_constraint(self):
         with self.assertRaises(IntegrityError):
