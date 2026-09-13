@@ -277,7 +277,7 @@ class AirplaneViewSet(ModelViewSet):
                 description="Filter by last name",
                 location="query",
                 required=False,
-            )
+            ),
         ],
     ),
     retrieve=extend_schema(summary="Show detailed information about crew"),
@@ -356,7 +356,10 @@ class CrewViewSet(ModelViewSet):
 class FlightViewSet(ModelViewSet):
     @staticmethod
     def _str_to_int_list(line):
-        return [int(x) for x in line.split(",")]
+        try:
+            return [int(x.strip()) for x in line.split(",")]
+        except ValueError:
+            return []
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -408,7 +411,9 @@ class FlightViewSet(ModelViewSet):
     list=extend_schema(
         summary="Show list of all user's orders",
     ),
-    retrieve=extend_schema(summary="Show detailed information about user's order",),
+    retrieve=extend_schema(
+        summary="Show detailed information about user's order",
+    ),
     create=extend_schema(
         summary="Create a new order",
     ),
@@ -457,14 +462,16 @@ class OrderViewSet(
     list=extend_schema(
         summary="Show list of all user's tickets",
     ),
-    retrieve=extend_schema(summary="Show detailed information about ticket",),
+    retrieve=extend_schema(
+        summary="Show detailed information about ticket",
+    ),
 )
 class TicketViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet):
-    queryset = Order.objects.none()
+    queryset = Ticket.objects.none()
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Ticket.objects.all().filter(order__user=self.request.user)
+        queryset = Ticket.objects.filter(order__user=self.request.user)
 
         if self.action == "list":
             queryset = queryset.select_related("flight__airplane")
