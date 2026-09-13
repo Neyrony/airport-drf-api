@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework.test import APITestCase
 
+
 class AuthenticatedTestCase(TestCase):
     def setUp(self):
         super().setUp()
@@ -23,7 +24,7 @@ class AdminAPITestCase(APITestCase):
             first_name="John",
             last_name="Green",
         )
-        self.client.force_login(self.user)
+        self.client.force_authenticate(self.user)
 
 
 class UserAPITestCase(APITestCase):
@@ -35,4 +36,4 @@ class UserAPITestCase(APITestCase):
             first_name="Eric",
             last_name="Brown",
         )
-        self.client.force_login(self.user)
+        self.client.force_authenticate(self.user)

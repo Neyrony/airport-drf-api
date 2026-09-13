@@ -26,18 +26,14 @@ from drf_spectacular.views import (
     SpectacularRedocView,
 )
 
-urlpatterns = (
-    [
-        path("admin/", admin.site.urls),
-        path("api/airport/", include("airport.urls", namespace="airport")),
-        path("api/user/", include("user.urls", namespace="user")),
-        path("schema/", SpectacularAPIView.as_view(), name="schema"),
-        path("docs/swagger/", SpectacularSwaggerView.as_view(), name="swagger-ui"),
-        path("docs/redoc/", SpectacularRedocView.as_view(), name="redoc"),
-    ]
-
-    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-)
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("api/airport/", include("airport.urls", namespace="airport")),
+    path("api/user/", include("user.urls", namespace="user")),
+    path("schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("docs/swagger/", SpectacularSwaggerView.as_view(), name="swagger-ui"),
+    path("docs/redoc/", SpectacularRedocView.as_view(), name="redoc"),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns += debug_toolbar_urls()

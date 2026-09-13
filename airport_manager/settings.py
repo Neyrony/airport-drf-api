@@ -154,7 +154,8 @@ INTERNAL_IPS = ["127.0.0.1", "0.0.0.0"]
 
 DEBUG_TOOLBAR_CONFIG = {
     "IS_RUNNING_TESTS": False,
-    "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG and not any("test" in arg for arg in sys.argv),
+    "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG
+    and not any("test" in arg for arg in sys.argv),
 }
 
 REST_FRAMEWORK = {

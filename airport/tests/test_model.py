@@ -59,7 +59,10 @@ class ModelTest(TestCase):
 
     def test_airport_constraint(self):
         with self.assertRaises(IntegrityError):
-            Airport.objects.create(name=self.airport_1.name, closest_big_city=self.airport_1.closest_big_city)
+            Airport.objects.create(
+                name=self.airport_1.name,
+                closest_big_city=self.airport_1.closest_big_city,
+            )
 
     def test_route_str(self):
         self.assertEqual(
