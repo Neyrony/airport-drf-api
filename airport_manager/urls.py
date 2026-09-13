@@ -35,6 +35,9 @@ urlpatterns = (
         path("docs/swagger/", SpectacularSwaggerView.as_view(), name="swagger-ui"),
         path("docs/redoc/", SpectacularRedocView.as_view(), name="redoc"),
     ]
-    + debug_toolbar_urls()
+
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 )
+
+if settings.DEBUG:
+    urlpatterns += debug_toolbar_urls()
