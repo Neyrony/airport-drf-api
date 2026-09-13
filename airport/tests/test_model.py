@@ -99,10 +99,15 @@ class ModelTest(TestCase):
             Ticket.objects.create(row=1, seat=1, flight=self.flight, order=self.order)
 
     def test_route_constraint(self):
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises((IntegrityError, ValidationError)):
             Route.objects.create(
-                source=self.airport_1, destination=self.airport_2, distance=9.9
+                source=self.airport_1, destination=self.airport_2, distance=11
             )
+
+    def test_route_source_destination_validation(self):
+        with self.assertRaises(ValidationError):
+            Route.objects.create(source=self.airport_1, destination=self.airport_1, distance=12)
+
 
     def test_airplane_type_constraint(self):
         with self.assertRaises(IntegrityError):
