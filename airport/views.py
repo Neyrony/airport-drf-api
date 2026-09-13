@@ -1,4 +1,10 @@
 from django.db.models import Count, F
+from drf_spectacular.utils import (
+    extend_schema_view,
+    extend_schema,
+    OpenApiParameter,
+    OpenApiResponse,
+)
 from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -36,6 +42,41 @@ from airport.serializers import (
 )
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Show list of all airports",
+        description="Show all airports that can be filtered by name and closest_big_city",
+        parameters=[
+            OpenApiParameter(
+                name="name",
+                type=str,
+                description="Filter by airport name",
+                location="query",
+                required=False,
+            ),
+            OpenApiParameter(
+                name="closest_big_city",
+                type=str,
+                description="Filter by closest big city",
+                location="query",
+                required=False,
+            ),
+        ],
+    ),
+    retrieve=extend_schema(
+        summary="Show detailed information about a specific airport"
+    ),
+    create=extend_schema(
+        summary="Create a new airport",
+    ),
+    update=extend_schema(
+        summary="Updates a specific airport completely",
+    ),
+    partial_update=extend_schema(summary="Updates a specific airport partly"),
+    destroy=extend_schema(
+        summary="Destroy a specific airport",
+    ),
+)
 class AirportViewSet(ModelViewSet):
     serializer_class = AirportSerializer
 
@@ -54,6 +95,37 @@ class AirportViewSet(ModelViewSet):
         return queryset
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Show list of all routes",
+        description="Show all routes that can be filtered by source and destination",
+        parameters=[
+            OpenApiParameter(
+                name="source",
+                type=str,
+                description="Filter by source",
+                location="query",
+                required=False,
+            ),
+            OpenApiParameter(
+                name="destination",
+                type=str,
+                description="Filter by destination",
+                location="query",
+                required=False,
+            ),
+        ],
+    ),
+    retrieve=extend_schema(summary="Show detailed information about routes"),
+    create=extend_schema(
+        summary="Create a new route",
+    ),
+    update=extend_schema(summary="Updates a specific route completely"),
+    partial_update=extend_schema(summary="Updates a specific route partly"),
+    destroy=extend_schema(
+        summary="Delete a specific route",
+    ),
+)
 class RouteViewSet(ModelViewSet):
     def get_queryset(self):
         queryset = Route.objects.all()
@@ -79,6 +151,30 @@ class RouteViewSet(ModelViewSet):
         return RouteSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Show list of all airplane types",
+        description="Show all airplane types that can be filtered by name",
+        parameters=[
+            OpenApiParameter(
+                name="name",
+                type=str,
+                description="Filter by name",
+                location="query",
+                required=False,
+            )
+        ],
+    ),
+    retrieve=extend_schema(summary="Show detailed information about airplane type"),
+    create=extend_schema(
+        summary="Create a new airplane type",
+    ),
+    update=extend_schema(summary="Updates a specific airplane type completely"),
+    partial_update=extend_schema(summary="Updates a specific airplane type partly"),
+    destroy=extend_schema(
+        summary="Delete a specific airplane type",
+    ),
+)
 class AirplaneTypeViewSet(ModelViewSet):
     serializer_class = AirplaneTypeSerializer
 
@@ -94,6 +190,43 @@ class AirplaneTypeViewSet(ModelViewSet):
         return queryset
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Show list of all airplanes",
+        description="Show all airplanes that can be filtered by name",
+        parameters=[
+            OpenApiParameter(
+                name="name",
+                type=str,
+                description="Filter by name",
+                location="query",
+                required=False,
+            )
+        ],
+    ),
+    retrieve=extend_schema(summary="Show detailed information about airplane"),
+    create=extend_schema(
+        summary="Create a new airplane",
+    ),
+    update=extend_schema(summary="Updates a specific airplane completely"),
+    partial_update=extend_schema(summary="Updates a specific airplane partly"),
+    destroy=extend_schema(
+        summary="Delete a specific airplane",
+    ),
+    upload_image=extend_schema(
+        summary="Upload an image to existing airplane",
+        request=AirplaneImageSerializer,
+        responses={
+            status.HTTP_200_OK: AirplaneImageSerializer,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                description="Invalid image format or file size exceeded"
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                description="Airplane not found"
+            ),
+        },
+    ),
+)
 class AirplaneViewSet(ModelViewSet):
     def get_queryset(self):
         queryset = Airplane.objects.all()
@@ -126,6 +259,37 @@ class AirplaneViewSet(ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Show list of all crews",
+        description="Show all crews that can be filtered by first name and last name",
+        parameters=[
+            OpenApiParameter(
+                name="first_name",
+                type=str,
+                description="Filter by first name",
+                location="query",
+                required=False,
+            ),
+            OpenApiParameter(
+                name="last_name",
+                type=str,
+                description="Filter by last name",
+                location="query",
+                required=False,
+            )
+        ],
+    ),
+    retrieve=extend_schema(summary="Show detailed information about crew"),
+    create=extend_schema(
+        summary="Create a new crew",
+    ),
+    update=extend_schema(summary="Updates a specific crew completely"),
+    partial_update=extend_schema(summary="Updates a specific crew partly"),
+    destroy=extend_schema(
+        summary="Delete a specific crew",
+    ),
+)
 class CrewViewSet(ModelViewSet):
     serializer_class = CrewSerializer
 
@@ -144,6 +308,51 @@ class CrewViewSet(ModelViewSet):
         return queryset
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Show list of all flights",
+        description="Show all flights that can be filtered by its crews, airplane name, source and destination",
+        parameters=[
+            OpenApiParameter(
+                name="crews",
+                type=str,
+                description="Filter by its crews",
+                location="query",
+                required=False,
+            ),
+            OpenApiParameter(
+                name="airplane_name",
+                type=str,
+                description="Filter by airplane name",
+                location="query",
+                required=False,
+            ),
+            OpenApiParameter(
+                name="source",
+                type=str,
+                description="Filter by source",
+                location="query",
+                required=False,
+            ),
+            OpenApiParameter(
+                name="destination",
+                type=str,
+                description="Filter by destination",
+                location="query",
+                required=False,
+            ),
+        ],
+    ),
+    retrieve=extend_schema(summary="Show detailed information about flight"),
+    create=extend_schema(
+        summary="Create a new flight",
+    ),
+    update=extend_schema(summary="Updates a specific flight completely"),
+    partial_update=extend_schema(summary="Updates a specific flight r"),
+    destroy=extend_schema(
+        summary="Delete a specific flight",
+    ),
+)
 class FlightViewSet(ModelViewSet):
     @staticmethod
     def _str_to_int_list(line):
@@ -195,6 +404,18 @@ class FlightViewSet(ModelViewSet):
         return queryset
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Show list of all user's orders",
+    ),
+    retrieve=extend_schema(summary="Show detailed information about user's order",),
+    create=extend_schema(
+        summary="Create a new order",
+    ),
+    destroy=extend_schema(
+        summary="Delete an order",
+    ),
+)
 class OrderViewSet(
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
@@ -232,6 +453,12 @@ class OrderViewSet(
         return queryset
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Show list of all user's tickets",
+    ),
+    retrieve=extend_schema(summary="Show detailed information about ticket",),
+)
 class TicketViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet):
     queryset = Order.objects.none()
     permission_classes = [IsAuthenticated]
