@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -22,7 +21,6 @@ class BaseTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.airport = Airport.objects.create(name="Test", closest_big_city="Test city")
-        cls.data = {"name": "Test2", "closest_big_city": "Test city2"}
 
 
 class UnauthorizedTest(BaseTest):
@@ -40,7 +38,7 @@ class UnauthorizedTest(BaseTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         response = self.client.put(url, data=get_data())
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        response = self.client.patch(url, data=get_data())
+        response = self.client.patch(url, data={"name": get_data()["name"]})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -61,7 +59,7 @@ class UserTest(UserAPITestCase, BaseTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.put(url, data=get_data())
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        response = self.client.patch(url, data=get_data())
+        response = self.client.patch(url, data={"name": get_data()["name"]})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -114,7 +112,7 @@ class AdminTest(AdminAPITestCase, BaseTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.put(url, data=get_data())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = self.client.patch(url, data=get_data())
+        response = self.client.patch(url, data={"name": get_data()["name"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
