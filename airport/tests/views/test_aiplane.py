@@ -14,6 +14,10 @@ def get_detail_url(pk):
     return reverse("airport:airplane-detail", kwargs={"pk": pk})
 
 
+def get_upload_image_url(pk):
+    return reverse("airport:airplane-upload-image", kwargs={"pk": pk})
+
+
 def get_data():
     airplane_type = AirplaneType.objects.create(name="test2")
     return {
@@ -183,7 +187,7 @@ class AdminTest(AdminAPITestCase, BaseTest):
         fake_image = SimpleUploadedFile("plane.gif", tiny_gif, content_type="image/gif")
 
         response = self.client.post(
-            get_detail_url(self.airplane.pk) + "upload-image/",
+            get_upload_image_url(self.airplane.pk),
             {"image": fake_image},
             format="multipart",
         )
@@ -192,3 +196,5 @@ class AdminTest(AdminAPITestCase, BaseTest):
 
         self.airplane.refresh_from_db()
         self.assertTrue(self.airplane.image)
+
+        self.addCleanup(self.airplane.image.delete, save=False)
