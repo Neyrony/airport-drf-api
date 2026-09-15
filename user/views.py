@@ -1,6 +1,6 @@
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import (
     TokenObtainPairView as JWTokenObtainPairView,
     TokenRefreshView as JWTokenRefreshView,
@@ -34,6 +34,7 @@ class UserCreateView(CreateAPIView):
 )
 class ManageUserView(RetrieveUpdateAPIView):
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
