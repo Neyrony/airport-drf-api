@@ -404,7 +404,7 @@ class FlightViewSet(ModelViewSet):
 
                 queryset = queryset.distinct()
 
-        return queryset
+        return queryset.order_by("arrival_time", "departure_time", "id")
 
 
 @extend_schema_view(
