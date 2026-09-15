@@ -20,7 +20,9 @@ def get_data():
 class BaseTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.crew = Crew.objects.create(first_name="test first name", last_name="test last name")
+        cls.crew = Crew.objects.create(
+            first_name="test first name", last_name="test last name"
+        )
 
 
 class UnauthorizedTest(BaseTest):
