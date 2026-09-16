@@ -44,6 +44,13 @@ class ManageUserView(RetrieveUpdateAPIView):
         return self.request.user
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="Connect user from db to telegram bot",
+        description="Provides interaction with user through created uuid token "
+        "that connects user and Telegram chat id",
+    )
+)
 class TelegramLinkView(GenericAPIView):
     serializer_class = UserTelegramSerializer
     permission_classes = [IsAuthenticated]
