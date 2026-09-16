@@ -24,3 +24,14 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
+
+
+class UserTelegramSerializer(serializers.ModelSerializer):
+    telegram_link = serializers.SerializerMethodField()
+
+    class Meta:
+        model = get_user_model()
+        fields = ("telegram_link",)
+
+    def get_telegram_link(self, instance):
+        return f"https://t.me/qweasdzxcwfdsbot/?start={instance.telegram_token}"

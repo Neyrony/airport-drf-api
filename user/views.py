@@ -1,13 +1,17 @@
+import uuid
+
 from drf_spectacular.utils import extend_schema_view, extend_schema
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
+from rest_framework import status
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 from rest_framework_simplejwt.views import (
     TokenObtainPairView as JWTokenObtainPairView,
     TokenRefreshView as JWTokenRefreshView,
     TokenVerifyView as JWTokenVerifyView,
 )
 
-from user.serializers import UserSerializer
+from user.serializers import UserSerializer, UserTelegramSerializer
 
 
 @extend_schema_view(
@@ -38,6 +42,21 @@ class ManageUserView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class TelegramLinkView(GenericAPIView):
+    serializer_class = UserTelegramSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def get(self, request):
+        user = self.get_object()
+        user.telegram_token = uuid.uuid4()
+        user.save()
+        serializer = UserTelegramSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @extend_schema_view(

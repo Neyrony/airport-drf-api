@@ -7,6 +7,7 @@ from user.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
+    TelegramLinkView,
 )
 
 urlpatterns = [
@@ -15,6 +16,7 @@ urlpatterns = [
     path("token/verify/", TokenVerifyView.as_view(), name="token-verify"),
     path("register/", UserCreateView.as_view(), name="register"),
     path("me/", ManageUserView.as_view(), name="profile"),
+    path("me/telegram-link/", TelegramLinkView.as_view(), name="telegram-link"),
 ]
 
 app_name = "user"

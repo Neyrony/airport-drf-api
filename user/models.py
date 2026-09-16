@@ -76,6 +76,8 @@ class User(AbstractUser):
         max_length=255,
         unique=True,
     )
+    telegram_id = models.BigIntegerField(null=True, blank=True, unique=True)
+    telegram_token = models.UUIDField(null=True, blank=True, unique=True)
 
     objects = CustomUserManager()
 
